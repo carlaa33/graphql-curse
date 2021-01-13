@@ -1,14 +1,38 @@
-import myCurrentLocation, { getGreeting, message, name } from "./myModule";
-import myAddFunction, { subtract } from "./math";
+import { GraphQLServer } from "graphql-yoga";
 
-console.log(message);
+//type definition
+const typeDefs = `
+type Query{
+    hello: String!
+    name: String!
+    location: String!
+    bio: String!
+}
+`;
 
-console.log(name);
+//Resolvers
+const resolvers = {
+  Query: {
+    hello() {
+      return "This is my first query";
+    },
+    name() {
+      return "Carla Reyes";
+    },
+    location() {
+      return "Philadelphia";
+    },
+    bio() {
+      return "I live in Philly and teach on Udemy";
+    },
+  },
+};
 
-console.log(myCurrentLocation);
+const server = new GraphQLServer({
+  typeDefs,
+  resolvers,
+});
 
-console.log(getGreeting("Maria"));
-
-console.log(myAddFunction(3, 2));
-
-console.log(subtract(5, 1));
+server.start(() => {
+  console.log("The server is up!");
+});
