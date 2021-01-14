@@ -44,11 +44,31 @@ const posts = [
   },
 ];
 
+const comments = [
+  {
+    id: "102",
+    text: "Hi",
+  },
+  {
+    id: "103",
+    text: "Bye",
+  },
+  {
+    id: "104",
+    text: "Goodbye",
+  },
+  {
+    id: "105",
+    text: "Goodbye2",
+  },
+];
+
 //type definition
 const typeDefs = `
 type Query{
     users(query: String): [User!]!
     posts(query: String): [Post!]!
+    comments: [Comment!]!
     me: User!
     post: Post!
 
@@ -68,6 +88,11 @@ type Post{
     body: String!
     published: Boolean!
     author: User!
+}
+
+type Comment{
+    id: ID!
+    text: String!
 }
 
 `;
@@ -96,6 +121,9 @@ const resolvers = {
           .includes(args.query.toLowerCase());
         return isTitleMatch || isBodyMatch;
       });
+    },
+    comments(parent, args, ctx, info) {
+      return comments;
     },
     me() {
       return {
