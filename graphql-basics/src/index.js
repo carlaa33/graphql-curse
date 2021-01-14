@@ -1,11 +1,51 @@
 import { GraphQLServer } from "graphql-yoga";
 
+//Demo user data
+const users = [
+  {
+    id: "1",
+    name: "Carla",
+    email: "carla@email.com",
+    age: 26,
+  },
+  {
+    id: "2",
+    name: "Maria",
+    email: "maria@email.com",
+  },
+  {
+    id: "3",
+    name: "Hector",
+    email: "hector@email.com",
+  },
+];
+
+const posts = [
+  {
+    id: "10",
+    title: "GraphQL 101",
+    body: "this is how to use GraphQL",
+    published: true,
+  },
+  {
+    id: "11",
+    title: "GraphQL 201",
+    body: "this is how to use GraphQL",
+    published: false,
+  },
+  {
+    id: "12",
+    title: "Programming Music",
+    body: "",
+    published: false,
+  },
+];
+
 //type definition
 const typeDefs = `
 type Query{
-    greeting(name: String, position: String): String!
-    add(numbers: [Float!]!): Float!
-    grades: [Int!]! 
+    users(query: String): [User!]!
+    posts(query: String): [Post!]!
     me: User!
     post: Post!
 
@@ -30,23 +70,27 @@ type Post{
 //Resolvers
 const resolvers = {
   Query: {
-    greeting(parent, args, ctx, info) {
-      if (args.name && args.position) {
-        return `Hello, ${args.name}! You are my favorite ${args.position}`;
-      } else {
-        return "Hello!";
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
       }
-    },
-    add(parent, args, ctx, info) {
-      if (args.numbers.length === 0) {
-        return 0;
-      }
-      return args.numbers.reduce((acumulator, currentValue) => {
-        return acumulator + currentValue;
+      return users.filter((user) => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
       });
     },
-    grades(parent, args, ctx, info) {
-      return [90, 80, 70];
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
+      }
+      return posts.filter((post) => {
+        const isTitleMatch = post.title
+          .toLowerCase()
+          .includes(args.query.toLowerCase());
+        const isBodyMatch = post.body
+          .toLowerCase()
+          .includes(args.query.toLowerCase());
+        return isTitleMatch || isBodyMatch;
+      });
     },
     me() {
       return {
